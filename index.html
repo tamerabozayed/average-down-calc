@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>حاسبة تعويض المتوسط</title>
   <style>
-    /* 🧱 الألوان الأساسية */
     :root {
       --main-color: #0a66c2;
       --bg-color: #f5f7fa;
@@ -21,8 +20,6 @@
       --btn-bg: #0d84ff;
       --btn-text: #fff;
     }
-
-    /* 🌍 إعدادات عامة */
     body {
       font-family: "Cairo", sans-serif;
       margin: 0;
@@ -30,7 +27,6 @@
       color: var(--text-color);
       transition: 0.3s;
     }
-
     header {
       display: flex;
       flex-wrap: wrap;
@@ -68,8 +64,6 @@
     nav button:hover {
       text-decoration: underline;
     }
-
-    /* 📱 الحاسبة */
     .calculator {
       background: var(--card-bg);
       margin: 30px auto;
@@ -117,7 +111,6 @@
       color: var(--main-color);
       font-weight: bold;
     }
-
     footer {
       text-align: center;
       padding: 15px;
@@ -126,8 +119,6 @@
       margin-top: 40px;
       font-size: 14px;
     }
-
-    /* النوافذ المنبثقة */
     .modal {
       display: none;
       position: fixed;
@@ -168,8 +159,6 @@
       cursor: pointer;
       font-size: 14px;
     }
-
-    /* اللغات المنسدلة */
     .dropdown {
       position: relative;
       display: inline-block;
@@ -200,7 +189,6 @@
     .dropdown:hover .dropdown-content {
       display: block;
     }
-
     @media (max-width: 600px) {
       header {
         flex-direction: column;
@@ -236,7 +224,7 @@
     </nav>
   </header>
 
-  <div class="calculator">
+  <div class="calculator" id="calcBox">
     <label id="qLabel">عدد الأسهم الحالية:</label>
     <input type="number" id="Q_old" placeholder="مثلاً 100">
 
@@ -288,6 +276,14 @@
   </div>
 
   <script>
+    // 🔹 عند الضغط على Enter داخل أي حقل، يتم حساب النتيجة
+    document.getElementById("calcBox").addEventListener("keydown", function(event) {
+      if (event.key === "Enter") {
+        event.preventDefault(); // منع إرسال النموذج الافتراضي
+        calculate(); // تنفيذ دالة الحساب
+      }
+    });
+
     function calculate() {
       const Q_old = parseFloat(document.getElementById("Q_old").value);
       const P_old = parseFloat(document.getElementById("P_old").value);
@@ -331,7 +327,6 @@
       document.documentElement.dir = isArabic ? "rtl" : "ltr";
       if (isArabic) {
         document.getElementById("titleText").textContent = "حاسبة تعويض المتوسط";
-        document.getElementById("titleText").style.fontFamily = "'Cairo', sans-serif";
         document.getElementById("helpBtn").textContent = "التعليمات";
         document.getElementById("contactBtn").textContent = "تواصل معنا";
         document.getElementById("langBtn").textContent = "اللغة";
@@ -353,7 +348,6 @@
         document.getElementById("telegramBtn").textContent = "📨 للتواصل عبر التليجرام";
       } else {
         document.getElementById("titleText").textContent = "Average Cost Adjustment Calculator";
-        document.getElementById("titleText").style.fontFamily = "'Poppins', sans-serif";
         document.getElementById("helpBtn").textContent = "Help";
         document.getElementById("contactBtn").textContent = "Contact";
         document.getElementById("langBtn").textContent = "Language";

@@ -1,950 +1,381 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>حاسبة تعويض المتوسط</title>
-
-  <!-- Google Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
-
-  <!-- Font Awesome for icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
   <style>
-    :root{
-      --main:#0a66c2;
-      --muted:#666;
-      --card-bg:#ffffff;
-      --success:#0a6600;
-      --danger:#c0392b;
+    /* 🧱 الألوان الأساسية */
+    :root {
+      --main-color: #0a66c2;
+      --bg-color: #f5f7fa;
+      --text-color: #222;
+      --card-bg: #fff;
+      --btn-bg: #0a66c2;
+      --btn-text: #fff;
+    }
+    body.dark {
+      --bg-color: #1e1e1e;
+      --text-color: #fff;
+      --card-bg: #2c2c2c;
+      --btn-bg: #0d84ff;
+      --btn-text: #fff;
     }
 
-    /* Dark mode vars */
-    body.dark{
-      --card-bg:#222;
-      --muted:#bbb;
+    /* 🌍 إعدادات عامة */
+    body {
+      font-family: "Cairo", sans-serif;
+      margin: 0;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      transition: 0.3s;
     }
 
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family:'Cairo',sans-serif;
-      background:linear-gradient(135deg,#e8f0ff,#f8fbff);
-      color:#111;
-      transition:background .3s,color .3s;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--main-color);
+      color: white;
+      padding: 10px 20px;
     }
-    body.dark{
-      background:linear-gradient(135deg,#0f1720,#14181b);
-      color:#eaeaea;
+    header .title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: bold;
     }
-
-    /* NAVBAR */
-    .navbar{
-      width:100%;
-      background:transparent;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:12px 18px;
-      gap:12px;
-      position:sticky;
-      top:0;
-      z-index:40;
+    header img {
+      width: 30px;
+      height: 30px;
     }
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      font-weight:700;
-      font-size:18px;
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
     }
-    .brand svg{width:36px;height:36px;flex:0 0 36px}
-
-    .nav-actions{
-      display:flex;
-      align-items:center;
-      gap:8px;
+    nav button {
+      background: transparent;
+      color: white;
+      border: none;
+      font-size: 15px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    nav button:hover {
+      text-decoration: underline;
     }
 
-    .nav-btn{
-      background:transparent;
-      border:0;
-      padding:8px 12px;
-      border-radius:8px;
-      cursor:pointer;
-      font-weight:600;
+    /* 📱 الحاسبة */
+    .calculator {
+      background: var(--card-bg);
+      margin: 30px auto;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      width: 90%;
+      max-width: 360px;
+      transition: 0.3s;
     }
-    .nav-btn:hover{background:rgba(0,0,0,0.04)}
-    body.dark .nav-btn:hover{background:rgba(255,255,255,0.04)}
-
-    .lang-select{
-      padding:8px 10px;
-      border-radius:8px;
-      border:1px solid rgba(0,0,0,0.08);
-      background:transparent;
-      cursor:pointer;
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
     }
-    body.dark .lang-select{border-color:rgba(255,255,255,0.06)}
-
-    .toggle-dark{
-      background:var(--main);
-      border:0;
-      color:#fff;
-      width:40px;height:40px;border-radius:50%;
-      display:inline-flex;align-items:center;justify-content:center;
-      cursor:pointer;
+    input {
+      width: 100%;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin-top: 5px;
+      text-align: center;
+      font-size: 15px;
     }
-
-    /* responsive hamburger */
-    .hamburger{
-      display:none;
-      background:transparent;border:0;font-size:20px;padding:8px;border-radius:8px;cursor:pointer;
+    .btns {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+      gap: 10px;
     }
-
-    /* MAIN CARD */
-    .container{
-      max-width:980px;
-      margin:26px auto;
-      padding:0 16px 80px;
+    button.action {
+      flex: 1;
+      padding: 10px;
+      background-color: var(--btn-bg);
+      color: var(--btn-text);
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
     }
-
-    .card{
-      background:var(--card-bg);
-      border-radius:14px;
-      padding:22px;
-      box-shadow:0 6px 22px rgba(10,102,194,0.06);
-      max-width:420px;
-      margin:18px auto;
-      transition:transform .25s,opacity .25s,background .3s;
-    }
-    body.dark .card{box-shadow:0 6px 22px rgba(0,0,0,0.5)}
-
-    label{display:block;margin:10px 0 6px;font-weight:700}
-    input[type=number]{
-      width:100%;
-      padding:10px 12px;
-      border-radius:10px;
-      border:1px solid rgba(0,0,0,0.09);
-      text-align:center;
-      font-size:15px;
-      outline:none;
-    }
-    body.dark input[type=number]{background:transparent;border-color:rgba(255,255,255,0.06);color:inherit}
-
-    .actions{
-      display:flex;
-      gap:10px;
-      margin-top:16px;
-    }
-    .btn-primary{
-      flex:1;
-      padding:10px 12px;
-      border-radius:10px;
-      border:0;
-      background:var(--main);
-      color:#fff;
-      font-weight:700;
-      cursor:pointer;
-      transition:transform .08s ease,background .2s;
-    }
-    .btn-primary:active{transform:scale(.98)}
-    .btn-secondary{
-      padding:10px 12px;
-      border-radius:10px;
-      border:0;
-      background:#777;
-      color:#fff;
-      cursor:pointer;
+    .result {
+      margin-top: 20px;
+      font-size: 18px;
+      text-align: center;
+      color: var(--main-color);
+      font-weight: bold;
     }
 
-    /* RESULT card, hidden initially */
-    .result{
-      margin-top:18px;
-      text-align:center;
-      font-weight:700;
-      padding:14px;
-      border-radius:10px;
-      background:#f0f9f0;
-      border:1px solid #b6e2b6;
-      color:var(--success);
-      min-height:48px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      opacity:0;
-      transform:translateY(-18px);
-      pointer-events:none;
-    }
-    body.dark .result{background:#1e2b1e;border-color:#4c9a4c;color:#9fe08a}
-
-    /* when show result, add class */
-    .result.show{
-      opacity:1;
-      transform:translateY(0);
-      pointer-events:auto;
-      animation:slideDown .35s ease both;
+    footer {
+      text-align: center;
+      padding: 15px;
+      background: var(--main-color);
+      color: white;
+      margin-top: 40px;
+      font-size: 14px;
     }
 
-    /* Slide-down animation */
-    @keyframes slideDown{
-      from{opacity:0;transform:translateY(-24px)}
-      to{opacity:1;transform:translateY(0)}
+    /* النوافذ المنبثقة */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
+    .modal-content {
+      background: var(--card-bg);
+      color: var(--text-color);
+      padding: 20px;
+      border-radius: 10px;
+      width: 85%;
+      max-width: 320px;
+      text-align: center;
+      position: relative;
+    }
+    .modal-content .closeBtn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      background: transparent;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      color: var(--text-color);
+    }
+    .modal-content button {
+      background: var(--main-color);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 12px;
+      margin-top: 15px;
+      cursor: pointer;
+      font-size: 14px;
     }
 
-    /* MODAL */
-    .modal-backdrop{
-      position:fixed;inset:0;
-      display:flex;align-items:flex-start;justify-content:center;
-      background:rgba(0,0,0,0.35);
-      padding:28px;
-      z-index:60;
-      opacity:0;pointer-events:none;
-      transition:opacity .25s;
+    /* اللغات المنسدلة */
+    .dropdown {
+      position: relative;
+      display: inline-block;
     }
-    .modal-backdrop.open{opacity:1;pointer-events:auto;animation:fadeIn .2s}
-    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-
-    .modal{
-      width:100%;
-      max-width:720px;
-      margin-top:10px;
-      background:var(--card-bg);
-      border-radius:12px;
-      padding:18px;
-      box-shadow:0 12px 40px rgba(0,0,0,0.12);
-      transform:translateY(-28px);
-      opacity:0;
-      transition:transform .35s ease,opacity .35s;
-      overflow:auto;
-      max-height:80vh;
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background: var(--card-bg);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      border-radius: 6px;
+      min-width: 100px;
+      right: 0;
+      z-index: 20;
     }
-    .modal-backdrop.open .modal{
-      transform:translateY(0);
-      opacity:1;
-      animation:slideDownModal .36s cubic-bezier(.2,.9,.2,1) both;
+    .dropdown-content button {
+      display: block;
+      width: 100%;
+      border: none;
+      background: transparent;
+      padding: 8px;
+      text-align: center;
+      cursor: pointer;
+      color: var(--text-color);
     }
-    @keyframes slideDownModal{
-      from{opacity:0;transform:translateY(-40px)}
-      to{opacity:1;transform:translateY(0)}
+    .dropdown-content button:hover {
+      background: #eee;
+    }
+    .dropdown:hover .dropdown-content {
+      display: block;
     }
 
-    .modal .modal-header{display:flex;align-items:center;justify-content:space-between;gap:10px}
-    .modal h3{margin:0}
-    .modal .close-btn{background:transparent;border:0;font-size:18px;cursor:pointer}
-
-    /* Footer small */
-    footer{max-width:980px;margin:18px auto 50px;text-align:center;color:var(--muted);font-size:13px}
-
-    /* Responsive */
-    @media (max-width:720px){
-      .card{padding:18px;margin:12px}
-      .hamburger{display:inline-block}
-      .nav-actions{display:none}
-      .mobile-menu{
-        position:fixed;top:60px;left:0;right:0;background:var(--card-bg);padding:12px;border-bottom:1px solid rgba(0,0,0,0.06);
-        display:flex;gap:8px;justify-content:space-around;z-index:50;
+    @media (max-width: 600px) {
+      header {
+        flex-direction: column;
+        align-items: flex-start;
       }
-      body.dark .mobile-menu{border-color:rgba(255,255,255,0.04)}
+      nav {
+        width: 100%;
+        justify-content: space-around;
+      }
+      .calculator {
+        width: 95%;
+      }
     }
-
-    /* small tweaks for ltr languages when active */
-    .ltr-wrap{direction:ltr;text-align:left}
   </style>
 </head>
 <body>
-
-  <!-- NAVBAR -->
-  <nav class="navbar" aria-label="navigation">
-    <div class="brand" id="brand">
-      <!-- Simple SVG icon (chart) -->
-      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <rect x="3" y="13" width="3" height="8" rx="0.5" fill="#0a66c2"/>
-        <rect x="8.5" y="8" width="3" height="13" rx="0.5" fill="#0a66c2"/>
-        <rect x="14" y="4" width="3" height="17" rx="0.5" fill="#0a66c2"/>
-        <circle cx="19" cy="6" r="1.6" fill="#0a66c2"/>
-      </svg>
-      <span id="siteTitle">حاسبة تعويض المتوسط</span>
+  <header>
+    <div class="title">
+      <img src="https://cdn-icons-png.flaticon.com/512/4149/4149670.png" alt="icon">
+      <span id="titleText">حاسبة تعويض المتوسط</span>
     </div>
+    <nav>
+      <button onclick="openModal('helpModal')">❓ <span id="helpBtn">التعليمات</span></button>
+      <button onclick="openModal('contactModal')">💬 <span id="contactBtn">تواصل معنا</span></button>
+      <div class="dropdown">
+        <button>🌐 <span id="langBtn">اللغة</span></button>
+        <div class="dropdown-content">
+          <button onclick="changeLang('ar')">العربية</button>
+          <button onclick="changeLang('en')">English</button>
+        </div>
+      </div>
+      <button id="darkToggle" onclick="toggleDark()">🌙</button>
+    </nav>
+  </header>
 
-    <div class="nav-actions" id="navActions">
-      <button class="nav-btn" id="btnInstructions"><i class="fa-regular fa-circle-question"></i>&nbsp;<span id="txtInstructions">التعليمات</span></button>
-      <button class="nav-btn" id="btnAbout"><i class="fa-solid fa-info"></i>&nbsp;<span id="txtAbout">من نحن</span></button>
+  <div class="calculator">
+    <label id="qLabel">عدد الأسهم الحالية:</label>
+    <input type="number" id="Q_old" placeholder="مثلاً 100">
 
-      <select id="langSelect" class="lang-select" aria-label="language selector"></select>
+    <label id="pOldLabel">متوسط سعر الشراء الحالي:</label>
+    <input type="number" id="P_old" placeholder="مثلاً 20" step="0.01">
 
-      <button class="toggle-dark" id="toggleDark" title="Toggle dark mode"><i class="fa-solid fa-moon"></i></button>
+    <label id="pCurrentLabel">سعر السوق الحالي:</label>
+    <input type="number" id="P_current" placeholder="مثلاً 15" step="0.01">
+
+    <label id="pTargetLabel">متوسط السعر المستهدف:</label>
+    <input type="number" id="P_target" placeholder="مثلاً 17" step="0.01">
+
+    <div class="btns">
+      <button class="action" onclick="calculate()" id="calcBtn">احسب</button>
+      <button class="action" onclick="resetFields()" id="resetBtn">إعادة تعيين</button>
     </div>
-
-    <button class="hamburger" id="hamburger" aria-label="menu"><i class="fa-solid fa-bars"></i></button>
-  </nav>
-
-  <!-- mobile menu (hidden on large screens) -->
-  <div id="mobileMenu" class="mobile-menu" style="display:none">
-    <button class="nav-btn" id="mBtnInstructions">التعليمات</button>
-    <button class="nav-btn" id="mBtnAbout">من نحن</button>
-    <select id="mLangSelect" class="lang-select"></select>
-    <button class="toggle-dark" id="mToggleDark"><i class="fa-solid fa-moon"></i></button>
+    <div class="result" id="result"></div>
   </div>
 
-  <!-- MAIN -->
-  <main class="container" id="main">
-    <section class="card" aria-labelledby="calcTitle">
-      <h2 id="calcTitle" style="margin:0 0 8px;font-size:20px">حاسبة تعويض المتوسط</h2>
+  <footer>© 2025 حاسبة تعويض المتوسط</footer>
 
-      <label for="Q_old" id="lblQ">عدد الأسهم الحالية :</label>
-      <input id="Q_old" type="number" inputmode="numeric" placeholder="مثلاً 100">
+  <!-- نافذة التعليمات -->
+  <div id="helpModal" class="modal">
+    <div class="modal-content">
+      <button class="closeBtn" onclick="closeModal('helpModal')">❌</button>
+      <p id="helpText">
+        أدخل بالترتيب:<br>
+        1. عدد الأسهم الحالية.<br>
+        2. أدخل متوسط سعر الشراء الحالي.<br>
+        3. أدخل سعر السوق الحالي.<br>
+        4. أدخل السعر المتوسط المستهدف.<br>
+        اضغط "احسب" للحصول على عدد الأسهم الإضافية المطلوبة.<br>
+        <b>ملاحظة:</b> تأكد أن القيم أرقام موجبة وأن سعر السوق يختلف عن السعر المستهدف.
+      </p>
+    </div>
+  </div>
 
-      <label for="P_old" id="lblPold">متوسط سعر الشراء الحالي :</label>
-      <input id="P_old" type="number" step="0.01" placeholder="مثلاً 20">
-
-      <label for="P_current" id="lblPcurrent">سعر السوق الحالي :</label>
-      <input id="P_current" type="number" step="0.01" placeholder="مثلاً 15">
-
-      <label for="P_target" id="lblPtarget">متوسط السعر المستهدف :</label>
-      <input id="P_target" type="number" step="0.01" placeholder="مثلاً 17">
-
-      <div class="actions">
-        <button class="btn-primary" id="btnCalc">احسب</button>
-        <button class="btn-secondary" id="btnReset">إعادة تعيين</button>
-      </div>
-
-      <div id="result" class="result" aria-live="polite"></div>
-    </section>
-  </main>
-
-  <!-- FOOTER -->
-  <footer id="footer">© 2025 جميع الحقوق محفوظة | تصميم حاسبة المستثمر</footer>
-
-  <!-- MODALS -->
-  <div id="modalBackdrop" class="modal-backdrop" style="display:none" role="dialog" aria-hidden="true">
-    <div class="modal" role="document" aria-labelledby="modalTitle">
-      <div class="modal-header">
-        <h3 id="modalTitle">التعليمات</h3>
-        <button class="close-btn" id="modalClose"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      <div id="modalBody" style="margin-top:12px;line-height:1.6"></div>
+  <!-- نافذة التواصل -->
+  <div id="contactModal" class="modal">
+    <div class="modal-content">
+      <button class="closeBtn" onclick="closeModal('contactModal')">❌</button>
+      <p id="contactText">
+        أداة بسيطة لمساعدة المستثمرين في حساب تعويض المتوسط بسرعة وسهولة.<br><br>
+        النسخة التجريبية 2025<br><br>
+        للاستفسارات والمقترحات:
+      </p>
+      <button id="telegramBtn" onclick="window.open('https://t.me/teto_douglas','_blank')">📨 للتواصل عبر التليجرام</button>
     </div>
   </div>
 
   <script>
-    /**********************
-     * Translations object
-     * Add new languages easily by adding a new key.
-     **********************/
-    const translations = {
-      "ar": {
-        dir: "rtl",
-        siteTitle: "حاسبة تعويض المتوسط",
-        calcTitle: "حاسبة تعويض المتوسط",
-        lblQ: "عدد الأسهم الحالية :",
-        lblPold: "متوسط سعر الشراء الحالي :",
-        lblPcurrent: "سعر السوق الحالي :",
-        lblPtarget: "متوسط السعر المستهدف :",
-        placeholderQ: "مثلاً 100",
-        placeholderPold: "مثلاً 20",
-        placeholderPcurrent: "مثلاً 15",
-        placeholderPtarget: "مثلاً 17",
-        btnCalc: "احسب",
-        btnReset: "إعادة تعيين",
-        instructionsTitle: "التعليمات",
-        instructionsBody: `
-          <ol>
-            <li>أدخل عدد الأسهم الحالية.</li>
-            <li>أدخل متوسط سعر الشراء الحالي.</li>
-            <li>أدخل سعر السوق الحالي والمتوسط المستهدف.</li>
-            <li>اضغط "احسب" للحصول على عدد الأسهم الإضافية المطلوبة.</li>
-          </ol>
-          <p><strong>ملاحظة:</strong> تأكد أن القيم أرقام موجبة وأن سعر السوق يختلف عن السعر المستهدف.</p>
-        `,
-        aboutTitle: "من نحن",
-        aboutBody: `<p>أداة بسيطة لمساعدة المستثمرين في حساب تعويض المتوسط بسرعة وسهولة. النسخة التجريبية 2025.</p>`,
-        errFill: "❗ يرجى إدخال جميع القيم.",
-        errEqual: "⚠️ لا يمكن أن يكون سعر السوق مساويًا للسعر المستهدف.",
-        errNegative: "⚠️ القيم المدخلة غير منطقية (نتيجة سالبة).",
-        resultPrefix: "عدد الأسهم الإضافية المطلوبة:"
-      },
-
-      "en": {
-        dir: "ltr",
-        siteTitle: "Average Compensation Calculator",
-        calcTitle: "Average Compensation Calculator",
-        lblQ: "Current number of shares:",
-        lblPold: "Current average purchase price:",
-        lblPcurrent: "Current market price:",
-        lblPtarget: "Target average price:",
-        placeholderQ: "e.g. 100",
-        placeholderPold: "e.g. 20",
-        placeholderPcurrent: "e.g. 15",
-        placeholderPtarget: "e.g. 17",
-        btnCalc: "Calculate",
-        btnReset: "Reset",
-        instructionsTitle: "Instructions",
-        instructionsBody: `
-          <ol>
-            <li>Enter current number of shares.</li>
-            <li>Enter your current average purchase price.</li>
-            <li>Enter current market price and target average price.</li>
-            <li>Press "Calculate" to get required additional shares.</li>
-          </ol>
-          <p><strong>Note:</strong> Make sure values are positive and market price ≠ target price.</p>
-        `,
-        aboutTitle: "About",
-        aboutBody: `<p>Simple tool to help investors calculate average compensation quickly. Beta 2025.</p>`,
-        errFill: "❗ Please enter all values.",
-        errEqual: "⚠️ Market price cannot equal the target price.",
-        errNegative: "⚠️ The entered values are not logical (negative result).",
-        resultPrefix: "Required additional shares:"
-      },
-
-      "fr": {
-        dir: "ltr",
-        siteTitle: "Calculateur de compensation moyenne",
-        calcTitle: "Calculateur de compensation moyenne",
-        lblQ: "Nombre d'actions actuelles :",
-        lblPold: "Prix moyen d'achat actuel :",
-        lblPcurrent: "Prix du marché actuel :",
-        lblPtarget: "Prix moyen cible :",
-        placeholderQ: "ex. 100",
-        placeholderPold: "ex. 20",
-        placeholderPcurrent: "ex. 15",
-        placeholderPtarget: "ex. 17",
-        btnCalc: "Calculer",
-        btnReset: "Réinitialiser",
-        instructionsTitle: "Mode d'emploi",
-        instructionsBody: `
-          <ol>
-            <li>Entrez le nombre d'actions actuelles.</li>
-            <li>Entrez votre prix moyen d'achat actuel.</li>
-            <li>Entrez le prix du marché et le prix cible.</li>
-            <li>Cliquez sur "Calculer" pour obtenir les actions supplémentaires nécessaires.</li>
-          </ol>
-        `,
-        aboutTitle: "À propos",
-        aboutBody: `<p>Outil simple pour aider les investisseurs à calculer la compensation moyenne. Beta 2025.</p>`,
-        errFill: "❗ Veuillez saisir toutes les valeurs.",
-        errEqual: "⚠️ Le prix du marché ne peut pas être égal au prix cible.",
-        errNegative: "⚠️ Les valeurs saisies ne sont pas logiques (résultat négatif).",
-        resultPrefix: "Actions supplémentaires requises:"
-      },
-
-      "it": {
-        dir: "ltr",
-        siteTitle: "Calcolatrice compensazione media",
-        calcTitle: "Calcolatrice compensazione media",
-        lblQ: "Numero attuale di azioni:",
-        lblPold: "Prezzo medio di acquisto attuale:",
-        lblPcurrent: "Prezzo di mercato corrente:",
-        lblPtarget: "Prezzo medio target:",
-        placeholderQ: "es. 100",
-        placeholderPold: "es. 20",
-        placeholderPcurrent: "es. 15",
-        placeholderPtarget: "es. 17",
-        btnCalc: "Calcola",
-        btnReset: "Reimposta",
-        instructionsTitle: "Istruzioni",
-        instructionsBody: "<ol><li>Inserisci il numero di azioni attuali.</li><li>Inserisci il prezzo medio di acquisto.</li><li>Inserisci prezzo di mercato e prezzo target.</li><li>Premi Calcola.</li></ol>",
-        aboutTitle: "Chi siamo",
-        aboutBody: `<p>Strumento semplice per aiutare gli investitori. Beta 2025.</p>`,
-        errFill: "❗ Inserisci tutti i valori.",
-        errEqual: "⚠️ Il prezzo di mercato non può essere uguale al prezzo target.",
-        errNegative: "⚠️ Valori non validi (risultato negativo).",
-        resultPrefix: "Azioni aggiuntive richieste:"
-      },
-
-      "de": {
-        dir: "ltr",
-        siteTitle: "Durchschnittsausgleich Rechner",
-        calcTitle: "Durchschnittsausgleich Rechner",
-        lblQ: "Aktuelle Anzahl Aktien:",
-        lblPold: "Aktueller durchschnittlicher Kaufpreis:",
-        lblPcurrent: "Aktueller Marktpreis:",
-        lblPtarget: "Gewünschter Durchschnittspreis:",
-        placeholderQ: "z.B. 100",
-        placeholderPold: "z.B. 20",
-        placeholderPcurrent: "z.B. 15",
-        placeholderPtarget: "z.B. 17",
-        btnCalc: "Berechnen",
-        btnReset: "Zurücksetzen",
-        instructionsTitle: "Anleitung",
-        instructionsBody: "<ol><li>Aktuelle Stückzahl eingeben.</li><li>Durchschnittspreis eingeben.</li><li>Marktpreis und Zielpreis eingeben.</li><li>Berechnen drücken.</li></ol>",
-        aboutTitle: "Über uns",
-        aboutBody: `<p>Einfache Hilfe für Investoren. Beta 2025.</p>`,
-        errFill: "❗ Bitte alle Werte eingeben.",
-        errEqual: "⚠️ Marktpreis darf nicht gleich Zielpreis sein.",
-        errNegative: "⚠️ Unlogische Werte (negatives Ergebnis).",
-        resultPrefix: "Erforderliche zusätzliche Aktien:"
-      },
-
-      "pt": {
-        dir: "ltr",
-        siteTitle: "Calculadora de compensação média",
-        calcTitle: "Calculadora de compensação média",
-        lblQ: "Número atual de ações:",
-        lblPold: "Preço médio de compra atual:",
-        lblPcurrent: "Preço de mercado atual:",
-        lblPtarget: "Preço médio alvo:",
-        placeholderQ: "ex. 100",
-        placeholderPold: "ex. 20",
-        placeholderPcurrent: "ex. 15",
-        placeholderPtarget: "ex. 17",
-        btnCalc: "Calcular",
-        btnReset: "Redefinir",
-        instructionsTitle: "Instruções",
-        instructionsBody: "<ol><li>Insira o número atual de ações.</li><li>Insira o preço médio de compra atual.</li><li>Insira preço de mercado e preço alvo.</li><li>Pressione Calcular.</li></ol>",
-        aboutTitle: "Sobre",
-        aboutBody: `<p>Ferramenta simples para investidores. Beta 2025.</p>`,
-        errFill: "❗ Por favor insira todos os valores.",
-        errEqual: "⚠️ O preço de mercado não pode ser igual ao preço alvo.",
-        errNegative: "⚠️ Valores não lógicos (resultado negativo).",
-        resultPrefix: "Ações adicionais necessárias:"
-      },
-
-      "zh-CN": { /* Chinese Simplified */
-        dir: "ltr",
-        siteTitle: "平均补仓计算器",
-        calcTitle: "平均补仓计算器",
-        lblQ: "当前股票数量：",
-        lblPold: "当前平均买入价：",
-        lblPcurrent: "当前市场价：",
-        lblPtarget: "目标平均价：",
-        placeholderQ: "例如 100",
-        placeholderPold: "例如 20",
-        placeholderPcurrent: "例如 15",
-        placeholderPtarget: "例如 17",
-        btnCalc: "计算",
-        btnReset: "重置",
-        instructionsTitle: "使用说明",
-        instructionsBody: "<ol><li>输入当前持股数量。</li><li>输入当前平均买入价。</li><li>输入当前市场价和目标价。</li><li>点击计算获取所需附加股数。</li></ol>",
-        aboutTitle: "关于我们",
-        aboutBody: `<p>帮助投资者快速计算补仓数量。Beta 2025。</p>`,
-        errFill: "❗ 请输入所有数值。",
-        errEqual: "⚠️ 市场价不能等于目标价。",
-        errNegative: "⚠️ 输入值不合理（负值结果）。",
-        resultPrefix: "所需附加股数："
-      },
-
-      "zh-TW": { /* Chinese Traditional */
-        dir: "ltr",
-        siteTitle: "平均補倉計算器",
-        calcTitle: "平均補倉計算器",
-        lblQ: "當前股票數量：",
-        lblPold: "當前平均買入價：",
-        lblPcurrent: "當前市場價：",
-        lblPtarget: "目標平均價：",
-        placeholderQ: "例如 100",
-        placeholderPold: "例如 20",
-        placeholderPcurrent: "例如 15",
-        placeholderPtarget: "例如 17",
-        btnCalc: "計算",
-        btnReset: "重置",
-        instructionsTitle: "使用說明",
-        instructionsBody: "<ol><li>輸入當前持股數量。</li><li>輸入當前平均買入價。</li><li>輸入當前市場價和目標價。</li><li>點擊計算獲取所需附加股數。</li></ol>",
-        aboutTitle: "關於我們",
-        aboutBody: `<p>幫助投資者快速計算補倉數量。Beta 2025。</p>`,
-        errFill: "❗ 請輸入所有數值。",
-        errEqual: "⚠️ 市場價不能等於目標價。",
-        errNegative: "⚠️ 輸入值不合理（負值結果）。",
-        resultPrefix: "所需附加股數："
-      },
-
-      "ja": {
-        dir: "ltr",
-        siteTitle: "平均補正計算機",
-        calcTitle: "平均補正計算機",
-        lblQ: "現在の保有株数：",
-        lblPold: "現在の平均取得価格：",
-        lblPcurrent: "現在の市場価格：",
-        lblPtarget: "目標平均価格：",
-        placeholderQ: "例: 100",
-        placeholderPold: "例: 20",
-        placeholderPcurrent: "例: 15",
-        placeholderPtarget: "例: 17",
-        btnCalc: "計算",
-        btnReset: "リセット",
-        instructionsTitle: "説明",
-        instructionsBody: "<ol><li>現在の株数を入力します。</li><li>現在の平均取得価格を入力します。</li><li>現在の市場価格と目標価格を入力します。</li><li>計算を押して追加株数を確認します。</li></ol>",
-        aboutTitle: "私たちについて",
-        aboutBody: `<p>投資家のための簡単なツール。Beta 2025。</p>`,
-        errFill: "❗ すべての値を入力してください。",
-        errEqual: "⚠️ 市場価格は目標価格と同じにできません。",
-        errNegative: "⚠️ 入力値が不正です（負の結果）。",
-        resultPrefix: "必要な追加株数："
-      },
-
-      "fil": { /* Filipino / Tagalog */
-        dir: "ltr",
-        siteTitle: "Average Compensation Calculator",
-        calcTitle: "Average Compensation Calculator",
-        lblQ: "Kasalukuyang bilang ng shares:",
-        lblPold: "Kasalukuyang average price ng pagbili:",
-        lblPcurrent: "Kasalukuyang market price:",
-        lblPtarget: "Target average price:",
-        placeholderQ: "hal. 100",
-        placeholderPold: "hal. 20",
-        placeholderPcurrent: "hal. 15",
-        placeholderPtarget: "hal. 17",
-        btnCalc: "Kalkulahin",
-        btnReset: "I-reset",
-        instructionsTitle: "Mga Tagubilin",
-        instructionsBody: "<ol><li>Ilagay ang kasalukuyang bilang ng shares.</li><li>Ilagay ang average buy price.</li><li>Ilagay ang market price at target price.</li><li>Pindutin ang Kalkulahin.</li></ol>",
-        aboutTitle: "Tungkol sa Amin",
-        aboutBody: `<p>Simple tool para sa mga investor. Beta 2025.</p>`,
-        errFill: "❗ Paki-lagay lahat ng values.",
-        errEqual: "⚠️ Hindi puwedeng magkapareho ang market price at target price.",
-        errNegative: "⚠️ Hindi lohikal ang values (negative result).",
-        resultPrefix: "Kailangang karagdagang shares:"
-      }
-    };
-
-    const supportedLangs = Object.keys(translations);
-
-    /**********************
-     * Elements
-     **********************/
-    const langSelect = document.getElementById('langSelect');
-    const mLangSelect = document.getElementById('mLangSelect');
-    const siteTitleEl = document.getElementById('siteTitle');
-    const calcTitleEl = document.getElementById('calcTitle');
-    const lblQ = document.getElementById('lblQ');
-    const lblPold = document.getElementById('lblPold');
-    const lblPcurrent = document.getElementById('lblPcurrent');
-    const lblPtarget = document.getElementById('lblPtarget');
-    const Q_old = document.getElementById('Q_old');
-    const P_old = document.getElementById('P_old');
-    const P_current = document.getElementById('P_current');
-    const P_target = document.getElementById('P_target');
-    const btnCalc = document.getElementById('btnCalc');
-    const btnReset = document.getElementById('btnReset');
-    const resultEl = document.getElementById('result');
-    const btnInstructions = document.getElementById('btnInstructions');
-    const btnAbout = document.getElementById('btnAbout');
-    const modalBackdrop = document.getElementById('modalBackdrop');
-    const modalTitle = document.getElementById('modalTitle');
-    const modalBody = document.getElementById('modalBody');
-    const modalClose = document.getElementById('modalClose');
-    const footer = document.getElementById('footer');
-    const txtInstructions = document.getElementById('txtInstructions');
-    const txtAbout = document.getElementById('txtAbout');
-
-    // mobile elements
-    const hamburger = document.getElementById('hamburger');
-    const mobileMenu = document.getElementById('mobileMenu');
-    const mBtnInstructions = document.getElementById('mBtnInstructions');
-    const mBtnAbout = document.getElementById('mBtnAbout');
-    const toggleDark = document.getElementById('toggleDark');
-    const mToggleDark = document.getElementById('mToggleDark');
-    const navActions = document.getElementById('navActions');
-
-    /**********************
-     * Initialize language selectors
-     **********************/
-    function populateLangSelects(){
-      // friendly labels for languages (display)
-      const labels = {
-        "ar":"العربية","en":"English","fr":"Français","it":"Italiano",
-        "de":"Deutsch","pt":"Português","zh-CN":"中文(简体)","zh-TW":"中文(繁體)",
-        "ja":"日本語","fil":"Filipino"
-      };
-      supportedLangs.forEach(code=>{
-        const opt = document.createElement('option');
-        opt.value = code;
-        opt.textContent = labels[code] || code;
-        langSelect.appendChild(opt);
-
-        const opt2 = opt.cloneNode(true);
-        mLangSelect.appendChild(opt2);
-      });
-    }
-    populateLangSelects();
-
-    /**********************
-     * Persistent settings (localStorage)
-     **********************/
-    const STORAGE_KEY = 'avgCompCalc_v1';
-    function saveAll(){
-      const payload = {
-        lang: currentLang,
-        dark: document.body.classList.contains('dark'),
-        inputs: {
-          Q_old: Q_old.value,
-          P_old: P_old.value,
-          P_current: P_current.value,
-          P_target: P_target.value
-        }
-      };
-      try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(payload)); }catch(e){}
-    }
-    function loadAll(){
-      try{
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if(!raw) return;
-        const data = JSON.parse(raw);
-        if(data.lang && translations[data.lang]) setLanguage(data.lang, false);
-        if(data.dark) document.body.classList.add('dark');
-        if(data.inputs){
-          Q_old.value = data.inputs.Q_old || '';
-          P_old.value = data.inputs.P_old || '';
-          P_current.value = data.inputs.P_current || '';
-          P_target.value = data.inputs.P_target || '';
-        }
-      }catch(e){}
-    }
-
-    /**********************
-     * Current language state
-     **********************/
-    let currentLang = 'ar';
-    function setLanguage(code, save=true){
-      if(!translations[code]) return;
-      const t = translations[code];
-      currentLang = code;
-
-      // direction and text alignment
-      document.documentElement.lang = code;
-      document.documentElement.dir = t.dir || 'ltr';
-      if(t.dir === 'rtl'){
-        document.body.dir = 'rtl';
-      } else {
-        document.body.dir = 'ltr';
-      }
-
-      // Update texts
-      siteTitleEl.textContent = t.siteTitle;
-      calcTitleEl.textContent = t.calcTitle;
-      lblQ.textContent = t.lblQ;
-      lblPold.textContent = t.lblPold;
-      lblPcurrent.textContent = t.lblPcurrent;
-      lblPtarget.textContent = t.lblPtarget;
-      Q_old.placeholder = t.placeholderQ;
-      P_old.placeholder = t.placeholderPold;
-      P_current.placeholder = t.placeholderPcurrent;
-      P_target.placeholder = t.placeholderPtarget;
-      btnCalc.textContent = t.btnCalc;
-      btnReset.textContent = t.btnReset;
-      txtInstructions.textContent = t.instructionsTitle;
-      txtAbout.textContent = t.aboutTitle;
-      footer.innerHTML = `© 2025 ${t.siteTitle}`;
-
-      // store selects
-      langSelect.value = code;
-      mLangSelect.value = code;
-
-      // adjust text alignment for ltr languages inside inputs & modal
-      const ltrWraps = document.querySelectorAll('.ltr-wrap');
-      ltrWraps.forEach(n=>n.classList.remove('ltr-wrap'));
-      if(t.dir === 'ltr'){
-        // for better UX convert card and modal to ltr content
-        document.querySelector('.card').classList.add('ltr-wrap');
-      } else {
-        document.querySelector('.card').classList.remove('ltr-wrap');
-      }
-
-      // set modal content for instructions/about
-      translations['__currentInstructions__'] = t.instructionsBody;
-      translations['__currentAbout__'] = t.aboutBody;
-
-      if(save) saveAll();
-    }
-
-    /**********************
-     * Calculation logic
-     **********************/
-    function showResultHTML(html){
-      resultEl.innerHTML = html;
-      resultEl.classList.add('show');
-    }
-    function clearResult(){
-      resultEl.classList.remove('show');
-      resultEl.innerHTML = '';
-    }
-    function calculate(){
-      clearResult();
-      const t = translations[currentLang] || translations['ar'];
-      const q = parseFloat(Q_old.value);
-      const pOld = parseFloat(P_old.value);
-      const pCur = parseFloat(P_current.value);
-      const pT = parseFloat(P_target.value);
-
-      if(isNaN(q) || isNaN(pOld) || isNaN(pCur) || isNaN(pT)){
-        showResultHTML(t.errFill);
+    function calculate() {
+      const Q_old = parseFloat(document.getElementById("Q_old").value);
+      const P_old = parseFloat(document.getElementById("P_old").value);
+      const P_current = parseFloat(document.getElementById("P_current").value);
+      const P_target = parseFloat(document.getElementById("P_target").value);
+      if (isNaN(Q_old) || isNaN(P_old) || isNaN(P_current) || isNaN(P_target)) {
+        document.getElementById("result").innerHTML = "❗ يرجى إدخال جميع القيم.";
         return;
       }
-      if(pCur === pT){
-        showResultHTML(t.errEqual);
+      if (P_current === P_target) {
+        document.getElementById("result").innerHTML = "⚠️ لا يمكن أن يكون سعر السوق مساويًا للسعر المستهدف.";
         return;
       }
-
-      const n = (q * (pT - pOld)) / (pCur - pT);
-
-      if(!isFinite(n) || n < 0){
-        showResultHTML(t.errNegative);
-        return;
-      }
-
-      // Show result with slide-from-top (class 'show' triggers animation)
-      const html = `
-        <div style="font-size:15px">${t.resultPrefix}</div>
-        <div style="font-size:20px;color:var(--main);margin-top:6px">${n.toFixed(2)}</div>
-      `;
-      showResultHTML(html);
-
-      // Save inputs + lang + dark mode
-      saveAll();
+      const n = (Q_old * (P_target - P_old)) / (P_current - P_target);
+      document.getElementById("result").innerHTML =
+        "عدد الأسهم الإضافية المطلوبة: <br><span style='color:var(--main-color)'>" + n.toFixed(2) + "</span>";
     }
 
-    /**********************
-     * Modal handling (slide from top)
-     **********************/
-    function openModal(title, htmlContent){
-      modalTitle.textContent = title;
-      modalBody.innerHTML = htmlContent;
-      modalBackdrop.style.display = 'flex';
-      // small delay to allow CSS transitions to run
-      requestAnimationFrame(()=> modalBackdrop.classList.add('open'));
-      modalBackdrop.setAttribute('aria-hidden','false');
-    }
-    function closeModal(){
-      modalBackdrop.classList.remove('open');
-      modalBackdrop.setAttribute('aria-hidden','true');
-      // hide after transition
-      setTimeout(()=> modalBackdrop.style.display = 'none', 300);
+    function resetFields() {
+      document.querySelectorAll("input").forEach(i => i.value = "");
+      document.getElementById("result").innerHTML = "";
     }
 
-    /**********************
-     * Events
-     **********************/
-    btnCalc.addEventListener('click', calculate);
-    btnReset.addEventListener('click', ()=>{
-      Q_old.value = P_old.value = P_current.value = P_target.value = '';
-      clearResult();
-      try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
-    });
-
-    // navbar buttons
-    btnInstructions.addEventListener('click', ()=>{
-      const t = translations[currentLang];
-      openModal(t.instructionsTitle, t.instructionsBody);
-    });
-    btnAbout.addEventListener('click', ()=>{
-      const t = translations[currentLang];
-      openModal(t.aboutTitle, t.aboutBody);
-    });
-    // mobile versions
-    mBtnInstructions.addEventListener('click', ()=> btnInstructions.click());
-    mBtnAbout.addEventListener('click', ()=> btnAbout.click());
-
-    modalClose.addEventListener('click', closeModal);
-    modalBackdrop.addEventListener('click', (e)=>{
-      if(e.target === modalBackdrop) closeModal();
-    });
-
-    // language change
-    langSelect.addEventListener('change', (e)=>{
-      setLanguage(e.target.value, true);
-    });
-    mLangSelect.addEventListener('change', (e)=>{
-      setLanguage(e.target.value, true);
-    });
-
-    // dark mode
-    function toggleDarkMode(){
-      document.body.classList.toggle('dark');
-      // change icon
-      const icon = toggleDark.querySelector('i');
-      if(document.body.classList.contains('dark')){
-        icon.classList.remove('fa-moon');
-        icon.classList.add('fa-sun');
-      } else {
-        icon.classList.remove('fa-sun');
-        icon.classList.add('fa-moon');
-      }
-      // mobile toggle
-      const icon2 = mToggleDark.querySelector('i');
-      if(document.body.classList.contains('dark')){
-        icon2.classList.remove('fa-moon');
-        icon2.classList.add('fa-sun');
-      } else {
-        icon2.classList.remove('fa-sun');
-        icon2.classList.add('fa-moon');
-      }
-      saveAll();
+    function openModal(id) {
+      document.getElementById(id).style.display = "flex";
     }
-    toggleDark.addEventListener('click', toggleDarkMode);
-    mToggleDark.addEventListener('click', toggleDarkMode);
 
-    // mobile menu toggle
-    hamburger.addEventListener('click', ()=>{
-      if(mobileMenu.style.display === 'none' || mobileMenu.style.display === ''){
-        mobileMenu.style.display = 'flex';
+    function closeModal(id) {
+      document.getElementById(id).style.display = "none";
+    }
+
+    function toggleDark() {
+      document.body.classList.toggle("dark");
+      const icon = document.getElementById("darkToggle");
+      icon.textContent = document.body.classList.contains("dark") ? "☀️" : "🌙";
+    }
+
+    function changeLang(lang) {
+      const isArabic = lang === "ar";
+      document.documentElement.lang = lang;
+      document.documentElement.dir = isArabic ? "rtl" : "ltr";
+      if (isArabic) {
+        document.getElementById("titleText").textContent = "حاسبة تعويض المتوسط";
+        document.getElementById("titleText").style.fontFamily = "'Cairo', sans-serif";
+        document.getElementById("helpBtn").textContent = "التعليمات";
+        document.getElementById("contactBtn").textContent = "تواصل معنا";
+        document.getElementById("langBtn").textContent = "اللغة";
+        document.getElementById("qLabel").textContent = "عدد الأسهم الحالية:";
+        document.getElementById("pOldLabel").textContent = "متوسط سعر الشراء الحالي:";
+        document.getElementById("pCurrentLabel").textContent = "سعر السوق الحالي:";
+        document.getElementById("pTargetLabel").textContent = "متوسط السعر المستهدف:";
+        document.getElementById("calcBtn").textContent = "احسب";
+        document.getElementById("resetBtn").textContent = "إعادة تعيين";
+        document.querySelector("footer").textContent = "© 2025 حاسبة تعويض المتوسط";
+        document.getElementById("Q_old").placeholder = "مثلاً 100";
+        document.getElementById("P_old").placeholder = "مثلاً 20";
+        document.getElementById("P_current").placeholder = "مثلاً 15";
+        document.getElementById("P_target").placeholder = "مثلاً 17";
+        document.getElementById("helpText").innerHTML =
+          "أدخل بالترتيب:<br>1. عدد الأسهم الحالية.<br>2. أدخل متوسط سعر الشراء الحالي.<br>3. أدخل سعر السوق الحالي.<br>4. أدخل السعر المتوسط المستهدف.<br>اضغط 'احسب' للحصول على عدد الأسهم الإضافية المطلوبة.<br><b>ملاحظة:</b> تأكد أن القيم أرقام موجبة وأن سعر السوق يختلف عن السعر المستهدف.";
+        document.getElementById("contactText").innerHTML =
+          "أداة بسيطة لمساعدة المستثمرين في حساب تعويض المتوسط بسرعة وسهولة.<br><br>النسخة التجريبية 2025<br><br>للاستفسارات والمقترحات:";
+        document.getElementById("telegramBtn").textContent = "📨 للتواصل عبر التليجرام";
       } else {
-        mobileMenu.style.display = 'none';
+        document.getElementById("titleText").textContent = "Average Cost Adjustment Calculator";
+        document.getElementById("titleText").style.fontFamily = "'Poppins', sans-serif";
+        document.getElementById("helpBtn").textContent = "Help";
+        document.getElementById("contactBtn").textContent = "Contact";
+        document.getElementById("langBtn").textContent = "Language";
+        document.getElementById("qLabel").textContent = "Current Shares:";
+        document.getElementById("pOldLabel").textContent = "Current Average Price:";
+        document.getElementById("pCurrentLabel").textContent = "Market Price:";
+        document.getElementById("pTargetLabel").textContent = "Target Average Price:";
+        document.getElementById("calcBtn").textContent = "Calculate";
+        document.getElementById("resetBtn").textContent = "Reset";
+        document.querySelector("footer").textContent = "© 2025 Average Cost Adjustment Calculator";
+        document.getElementById("Q_old").placeholder = "e.g. 100";
+        document.getElementById("P_old").placeholder = "e.g. 20";
+        document.getElementById("P_current").placeholder = "e.g. 15";
+        document.getElementById("P_target").placeholder = "e.g. 17";
+        document.getElementById("helpText").innerHTML =
+          "Enter in order:<br>1. Current shares.<br>2. Current average purchase price.<br>3. Current market price.<br>4. Desired target average price.<br>Click 'Calculate' to get the required additional shares.<br><b>Note:</b> Ensure all values are positive and market price differs from target.";
+        document.getElementById("contactText").innerHTML =
+          "A simple tool to help investors quickly and easily calculate average cost adjustments.<br><br>Beta Version 2025<br><br>For inquiries and suggestions:";
+        document.getElementById("telegramBtn").textContent = "📨 Contact via Telegram";
       }
-    });
-
-    // hide mobile menu when clicking outside on large screens
-    window.addEventListener('resize', ()=>{
-      if(window.innerWidth > 720){
-        mobileMenu.style.display = 'none';
-        navActions.style.display = 'flex';
-      } else {
-        navActions.style.display = 'none';
-      }
-    });
-
-    // Enter key on inputs triggers calculation
-    [Q_old,P_old,P_current,P_target].forEach(inp=>{
-      inp.addEventListener('keydown',(e)=>{
-        if(e.key === 'Enter') {
-          e.preventDefault();
-          calculate();
-        }
-      });
-      // save inputs on change
-      inp.addEventListener('input', ()=> saveAll());
-    });
-
-    // initial load: language and settings
-    (function init(){
-      // default language fallback: try saved storage
-      try{
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if(raw){
-          const parsed = JSON.parse(raw);
-          if(parsed.lang && translations[parsed.lang]) currentLang = parsed.lang;
-          if(parsed.dark) document.body.classList.add('dark');
-        }
-      }catch(e){}
-      setLanguage(currentLang, false);
-      // set selects value to currentLang (setLanguage already does it)
-      // load inputs
-      loadAll();
-      // ensure mobile menu hidden initially for large screens
-      if(window.innerWidth > 720) mobileMenu.style.display = 'none';
-    })();
-
-    // Accessibility: close modal with Escape
-    window.addEventListener('keydown',(e)=>{
-      if(e.key === 'Escape') {
-        if(modalBackdrop.classList.contains('open')) closeModal();
-      }
-    });
-
-    /**********************
-     * Utility: allow adding new language dynamically
-     **********************/
-    window.addNewLanguage = function(code, dict, label){
-      if(translations[code]) return;
-      translations[code] = dict;
-      const opt = document.createElement('option');
-      opt.value = code; opt.textContent = label || code;
-      langSelect.appendChild(opt);
-      mLangSelect.appendChild(opt.cloneNode(true));
-    };
-
+      document.querySelectorAll(".closeBtn").forEach(btn => btn.textContent = "❌");
+    }
   </script>
 </body>
 </html>
